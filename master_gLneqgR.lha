@@ -1,0 +1,165 @@
+#This file has been generated automatically by FeynRules
+Block ALRMINPUTS
+  1  0.00000000E+00  # lm2
+  2  1.5000000000000E+00  # lm3
+  3  1.0000000000000E+00  # al1
+  4  -8.000000000000E-01  # al2
+  5  1.0000000000000E+00  # al3
+  6  1.0000000000000E+01  # tb
+  7  -1.000000000000E+01  # mu3
+  8  1.0000000000000E+04  # vp
+  9  6.4648221000000E-01  # gR
+Block CKMBLOCK
+  1  2.2100000000000E-01  # s12
+  2  4.0000000000000E-02  # s23
+  3  3.5000000000000E-03  # s13
+Block SMINPUTS
+  1  1.2790000000000E+02  # aEWM1
+  2  1.1663700000000E-05  # Gf
+  3  1.1840000000000E-01  # aS
+Block YUKAWA
+  1  5.0400000000000E-03  # ymdo
+  2  2.5500000000000E-03  # ymup
+  3  1.0100000000000E-01  # yms
+  4  1.2700000000000E+00  # ymc
+  5  4.7000000000000E+00  # ymb
+  6  1.7200000000000E+02  # ymt
+  7  3.0000000000000E+02  # ymddo
+  8  6.0000000000000E+02  # ymds
+  9  1.0000000000000E+03  # ymdb
+  11  5.1100000000000E-04  # yme
+  12  1.0000000000000E-12  # ymnue
+  13  1.0566000000000E-01  # ymm
+  14  8.9000000000000E-12  # ymnum
+  15  1.7770000000000E+00  # ymtau
+  16  5.0400000000000E-11  # ymnutau
+  17  3.0000000000000E+02  # ymne
+  18  5.0000000000000E+02  # ymnm
+  19  7.0000000000000E+02  # ymntau
+Block MASS
+  1  5.0400000000000E-03  # MD
+  2  2.5500000000000E-03  # MU
+  3  1.0100000000000E-01  # MS
+  4  1.2700000000000E+00  # MC
+  5  4.7000000000000E+00  # MB
+  6  1.7200000000000E+02  # MT
+  11  5.1100000000000E-04  # Me
+  12  1.0000000000000E-12  # Mve
+  13  1.0566000000000E-01  # MMU
+  14  8.9000000000000E-12  # Mvm
+  15  1.7770000000000E+00  # MTA
+  16  5.0400000000000E-11  # Mvt
+  23  9.1187600000000E+01  # MZ
+  24  8.0385000000000E+01  # MW
+  25  1.2500000000000E+02  # mh
+  26  1.3412604304171E+04  # mh1
+  27  8.4504923151097E+02  # mh2
+  28  1.7315352239543E+04  # mh3
+  29  1.3412604304171E+04  # ma1
+  30  8.4496360594182E+02  # ma2
+  31  9.0844822839149E+02  # mhp1
+  32  1.3416671466264E+04  # mhm2
+  100  3.8957293347672E+03  # MZp
+  101  3.2324110500000E+03  # MWp
+  103  3.0000000000000E+02  # Mne
+  104  5.0000000000000E+02  # Mnm
+  105  7.0000000000000E+02  # Mnt
+  106  3.0000000000000E+02  # MDD
+  107  6.0000000000000E+02  # MDS
+  108  1.0000000000000E+03  # MDB
+DECAY  6  1.5083364900000E+00  # WT
+DECAY  23  2.5200000000000E+00  # WZ
+DECAY  24  2.1100000000000E+00  # WW
+DECAY  25  9.2400000000000E-03  # WH
+DECAY  26  5.8700000000000E+01  # WH1
+DECAY  27  1.4600000000000E+00  # WH2
+DECAY  28  4.9500000000000E+02  # WH3
+DECAY  29  5.8700000000000E+01  # WA1
+DECAY  30  1.4500000000000E+00  # WA2
+DECAY  31  5.9900000000000E+00  # WHP1
+DECAY  32  5.7700000000000E+01  # WHM2
+DECAY  100  1.6700000000000E+01  # WZp
+DECAY  101  6.3300000000000E+00  # WWp
+DECAY  106  1.0000000000000E+00  # Wdd
+DECAY  107  1.0000000000000E+00  # Wds
+DECAY  108  1.0000000000000E+00  # Wdb
+
+#===========================================================
+# QUANTUM NUMBERS OF NEW STATE(S) (NON SM PDG CODE) IF ANY
+#===========================================================
+
+Block QNUMBERS 100  # Zp
+        1 0  # 3 times electric charge
+        2 3  # number of spin states (2S+1)
+        3 1  # colour rep (1: singlet, 3: triplet, 8: octet)
+        4 0  # Particle/Antiparticle distinction (0=own anti)
+Block QNUMBERS 101  # Wp+
+        1 3  # 3 times electric charge
+        2 3  # number of spin states (2S+1)
+        3 1  # colour rep (1: singlet, 3: triplet, 8: octet)
+        4 1  # Particle/Antiparticle distinction (0=own anti)
+Block QNUMBERS 103  # ~ne
+        1 0  # 3 times electric charge
+        2 2  # number of spin states (2S+1)
+        3 1  # colour rep (1: singlet, 3: triplet, 8: octet)
+        4 1  # Particle/Antiparticle distinction (0=own anti)
+Block QNUMBERS 104  # nm
+        1 0  # 3 times electric charge
+        2 2  # number of spin states (2S+1)
+        3 1  # colour rep (1: singlet, 3: triplet, 8: octet)
+        4 1  # Particle/Antiparticle distinction (0=own anti)
+Block QNUMBERS 105  # nt
+        1 0  # 3 times electric charge
+        2 2  # number of spin states (2S+1)
+        3 1  # colour rep (1: singlet, 3: triplet, 8: octet)
+        4 1  # Particle/Antiparticle distinction (0=own anti)
+Block QNUMBERS 106  # dd
+        1 -1  # 3 times electric charge
+        2 2  # number of spin states (2S+1)
+        3 3  # colour rep (1: singlet, 3: triplet, 8: octet)
+        4 1  # Particle/Antiparticle distinction (0=own anti)
+Block QNUMBERS 107  # ds
+        1 -1  # 3 times electric charge
+        2 2  # number of spin states (2S+1)
+        3 3  # colour rep (1: singlet, 3: triplet, 8: octet)
+        4 1  # Particle/Antiparticle distinction (0=own anti)
+Block QNUMBERS 108  # db
+        1 -1  # 3 times electric charge
+        2 2  # number of spin states (2S+1)
+        3 3  # colour rep (1: singlet, 3: triplet, 8: octet)
+        4 1  # Particle/Antiparticle distinction (0=own anti)
+Block QNUMBERS 26  # H1
+        1 0  # 3 times electric charge
+        2 1  # number of spin states (2S+1)
+        3 1  # colour rep (1: singlet, 3: triplet, 8: octet)
+        4 0  # Particle/Antiparticle distinction (0=own anti)
+Block QNUMBERS 27  # H2
+        1 0  # 3 times electric charge
+        2 1  # number of spin states (2S+1)
+        3 1  # colour rep (1: singlet, 3: triplet, 8: octet)
+        4 0  # Particle/Antiparticle distinction (0=own anti)
+Block QNUMBERS 28  # H3
+        1 0  # 3 times electric charge
+        2 1  # number of spin states (2S+1)
+        3 1  # colour rep (1: singlet, 3: triplet, 8: octet)
+        4 0  # Particle/Antiparticle distinction (0=own anti)
+Block QNUMBERS 29  # A1
+        1 0  # 3 times electric charge
+        2 1  # number of spin states (2S+1)
+        3 1  # colour rep (1: singlet, 3: triplet, 8: octet)
+        4 0  # Particle/Antiparticle distinction (0=own anti)
+Block QNUMBERS 30  # A2
+        1 0  # 3 times electric charge
+        2 1  # number of spin states (2S+1)
+        3 1  # colour rep (1: singlet, 3: triplet, 8: octet)
+        4 0  # Particle/Antiparticle distinction (0=own anti)
+Block QNUMBERS 31  # H1+
+        1 3  # 3 times electric charge
+        2 1  # number of spin states (2S+1)
+        3 1  # colour rep (1: singlet, 3: triplet, 8: octet)
+        4 1  # Particle/Antiparticle distinction (0=own anti)
+Block QNUMBERS 32  # H2-
+        1 -3  # 3 times electric charge
+        2 1  # number of spin states (2S+1)
+        3 1  # colour rep (1: singlet, 3: triplet, 8: octet)
+        4 1  # Particle/Antiparticle distinction (0=own anti)

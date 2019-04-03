@@ -3,6 +3,7 @@ import numpy as np
 import os
 import pyslha
 from math import *
+from scipy.interpolate import interp1d
 
 class MyPySLHA():
     def __init__(self):
@@ -123,8 +124,6 @@ class MyPySLHA():
             self.mhp  = self.Read_Block("MICROMEGAS",414)
             self.mhm  = self.Read_Block("MICROMEGAS",415)            
 
-    
-
     def MassConstraints(self):
 
         self.MZp_Bound = False
@@ -132,22 +131,30 @@ class MyPySLHA():
         self.Mh3_Bound = False
 
         if self.CheckMicrOMEGABlock() == True:
-            if self.Read_Block("MICROMEGAS",401) > 3500.0: 
+            if self.Read_Block("MICROMEGAS",401) > 1000.0 and self.Read_Block("MICROMEGAS",401) < 5500.0: 
                 self.MZp_Bound = True
-            if self.Read_Block("MICROMEGAS",410) > 125.0:
+            if self.Read_Block("MICROMEGAS",410) < 500.0:
                 self.Mh2_Bound = True
             if self.Read_Block("MICROMEGAS",411) < 2500.0:
                 self.Mh3_Bound = True
 
 #        self.CheckConstraints = self.MZp_Bound and self.Mh2_Bound
-        self.CheckConstraints = self.MZp_Bound and self.Mh3_Bound
+        self.CheckConstraints = self.MZp_Bound and self.Mh3_Bound and self.Mh2_Bound
+#        self.CheckConstraints = self.Mh3_Bound and self.Mh2_Bound
         return self.CheckConstraints
 
     def RelicDensity_Constraint(self):
-        self.Relic_Density_Bound = False
 
-        if self.Read_Block("MICROMEGAS",700) < 1.0:
-            self.Relic_Density_Bound = True
+        if self.CheckMicrOMEGABlock() == True:
+            self.Relic_Density = self.Read_Block("MICROMEGAS",700)
+            if self.Relic_Density <= 5.0:
+                self.Relic_Density_Bound = True
+            else:
+                self.Relic_Density_Bound = False
+
+        else:
+            self.Relic_Density_Bound = False
+
         return self.Relic_Density_Bound    
 
     def Parameters(self):
@@ -192,6 +199,22 @@ class MyPySLHA():
 
     def CheckZpMass(self, test_no):
         self.test_no = test_no
+
+        if self.test_no == "test_0":
+
+            self.MZpTerm1      = (self.gR**2/4)
+            self.MZpTerm2      = (((self.gBL**2+self.gR**2)*self.k**2)/self.gR**2)
+            self.MZpTerm3      = (((self.gR**2)*(self.vR**2))/((self.gBL**2)+(self.gR**2)))
+
+            self.ZpMassSquared = self.MZpTerm1*(self.MZpTerm2 + self.MZpTerm3)
+            self.ZpMass        = sqrt(self.ZpMassSquared)
+
+            if self.ZpMass > 1000. and self.ZpMass < 5500.:
+                ZpMassGuess = True
+                return self.ZpMassGuess
+            else:
+                ZpMassGuess = False
+                return self.ZpMassGuess
 
         if self.CheckMicrOMEGABlock() == True and self.test_no == "test_1":
 
@@ -305,9 +328,10 @@ class MyPySLHA():
 
     def Check_RD_diff(self, RD_diff_list):
         self.RD_diff_list = RD_diff_list
-        self.Logic_RD_diff = None
         if len(self.RD_diff_list) >= 2:
-            if self.RD_diff_list[-1] < self.RD_diff_list[-2]: self.Logic_RD_diff = True
+            if self.RD_diff_list[-1] < self.RD_diff_list[-2]:
+                self.Logic_RD_diff = True
+                self.RD_diff_list.pop(0)
             else: self.Logic_RD_diff = False
         elif len(self.RD_diff_list) == 1:
             self.Logic_RD_diff = True
@@ -365,3 +389,28 @@ class MyPySLHA():
         self.THL3 = -self.sgn*(-self.fx+self.fx2)/sqrt((self.fx2**2)*(1+self.gx**2)+(self.gx-self.gx2)**2-2*self.fx*(self.fx2+self.fx2*self.gx*self.gx2)+(self.fx**2)*(1+self.gx2**2))
         self.THR3 = self.sgn*(self.fx2*self.gx-self.fx*self.gx2)/sqrt((self.fx2**2)*(1+self.gx**2)+(self.gx-self.gx2)**2-2*self.fx*(self.fx2+self.fx2*self.gx*self.gx2)+(self.fx**2)*(1+self.gx2**2))
 
+
+    def ZpMassLimit(self):
+        self.given_gR = self.gR 
+
+        self.gR_values_given = [0.37, self.gL]
+        self.Zp_values_given = [5000., 4000.]
+
+        self.y1 = interp1d(self.gR_values_given, self.Zp_values_given)
+        self.Zp_limit = self.y1(self.given_gR)
+        self.Zp_limit = self.Zp_limit.tolist()
+
+        return self.Zp_limit
+
+    def CheckZpMassLimit(self):
+        self.ZpMassLimit()
+
+        if self.CheckMicrOMEGABlock() == True:
+            if self.MZp < self.ZpMassLimit():
+                self.LogicZpMassLimit = False
+            elif self.MZp >= self.ZpMassLimit():
+                self.LogicZpMassLimit = True
+        else:
+            self.LogicZpMassLimit = False
+
+        return self.LogicZpMassLimit

@@ -5,9 +5,16 @@ import numpy as np
 import os
 import pyslha
 import pandas as pd
+import signal
+import time
 
 from MyPySLHA import *
 from MyMicrOMEGAs import *
+from ALRM_calculator import *
+
+
+def handler(signum, frame):
+        print 'Signal handler called with signal', signum
 
 ######## Current File Paths ########
 
@@ -28,12 +35,13 @@ dirPathLHAFileWithDM = os.path.dirname("outfiles/DM_ALRM.")
 
 #####################################
 
-NumberofEvent = 20000
-TotalFocusedRun = 50
+fileno = len(fnmatch.filter(os.listdir(PathForLHAfiles), 'ALRM.*'))
+MaxNumberOfSolution = 40000
+TotalFocusedRun = 75
 
 list_RD_diff = []
 
-for iter in range(1,NumberofEvent):
+while fileno < MaxNumberOfSolution:
     currentLHA = MyPySLHA()
     sigma = 0.10
     if currentLHA.CheckLHAexist(LHAFileFullPath) == True:
@@ -42,7 +50,7 @@ for iter in range(1,NumberofEvent):
 
         currentLHA.allcontent.blocks["ALRMINPUTS"][1] = 0.0    #lm2
 #        currentLHA.allcontent.blocks["ALRMINPUTS"][2] = np.random.uniform(0.010,0.030)  #lm3
-        currentLHA.allcontent.blocks["ALRMINPUTS"][2] = np.random.uniform(0.001,0.050)  #lm3
+        currentLHA.allcontent.blocks["ALRMINPUTS"][2] = np.random.uniform(0.001,0.030)  #lm3
 
         currentLHA.allcontent.blocks["ALRMINPUTS"][3] = np.random.normal(0.3,sigma)  #al1
         currentLHA.allcontent.blocks["ALRMINPUTS"][4] = np.random.normal(-0.2,sigma) #al2
@@ -51,7 +59,7 @@ for iter in range(1,NumberofEvent):
         currentLHA.allcontent.blocks["ALRMINPUTS"][6] = np.random.uniform(1.0,50.0)    #tb
         currentLHA.allcontent.blocks["ALRMINPUTS"][7] = np.random.uniform(-0.8, -0.3)  #mu3
 #        currentLHA.allcontent.blocks["ALRMINPUTS"][8] = 6850. #vp
-        currentLHA.allcontent.blocks["ALRMINPUTS"][8] = np.random.uniform(6500., 11000.) #vp
+        currentLHA.allcontent.blocks["ALRMINPUTS"][8] = np.random.uniform(6500., 13000.) #vp
 
 #        currentLHA.allcontent.blocks["ALRMINPUTS"][9] = 0.370000000000000
         currentLHA.allcontent.blocks["ALRMINPUTS"][9] = np.random.uniform(0.37, currentLHA.gL)
@@ -72,16 +80,40 @@ for iter in range(1,NumberofEvent):
         currentLHA.allcontent.blocks["YUKAWA"][8] = currentLHA.allcontent.blocks["MASS"][107]
         currentLHA.allcontent.blocks["YUKAWA"][9] = currentLHA.allcontent.blocks["MASS"][108]
 
-        fileno = len(fnmatch.filter(os.listdir(PathForLHAfiles), 'ALRM.*'))
-        newfileno = fileno + 1
-        currentLHA.NewLHAFileName = "ALRM."+str(newfileno)
-        currentLHA.NewLHAFileFullPath = LHAFiledirPath + "/LHAfiles/" + currentLHA.NewLHAFileName
-        currentLHA.WriteNewLHAFile(currentLHA.NewLHAFileFullPath, currentLHA.allcontent, 10)
+################ Pre-Check For Free Parameters By Using ALRM-Calculator  #####################
+        
+        ALRM = ALRM_calculator()
+        ALRM.gR = currentLHA.allcontent.blocks["ALRMINPUTS"][9]
+        ALRM.vp = currentLHA.allcontent.blocks["ALRMINPUTS"][8]
+        ALRM.tb = currentLHA.allcontent.blocks["ALRMINPUTS"][6]
 
-################# MicrOMEGAs Part ###########################################
-        if currentLHA.CheckMinimization() == True:
+        ALRM.lm2 = currentLHA.allcontent.blocks["ALRMINPUTS"][1]
+        ALRM.lm3 = currentLHA.allcontent.blocks["ALRMINPUTS"][2]
+
+        ALRM.al1 = currentLHA.allcontent.blocks["ALRMINPUTS"][3]
+        ALRM.al2 = currentLHA.allcontent.blocks["ALRMINPUTS"][4]
+        ALRM.al3 = currentLHA.allcontent.blocks["ALRMINPUTS"][5]
+
+        ALRM.mu3 = currentLHA.allcontent.blocks["ALRMINPUTS"][7]
+
+        ALRM.parameters(ALRM.gR,ALRM.vp,ALRM.tb,ALRM.lm2,ALRM.lm3,ALRM.al1,ALRM.al2,ALRM.al3,ALRM.mu3)
+        ALRM.CheckWMasses()
+        ALRM.CheckZZMixing()
+        ALRM.CheckZMasses()
+        ALRM.CheckHiggsMasses()
+
+        if (ALRM.Check_MassBounds() and ALRM.Check_Minimization() and ALRM.Check_ZpMassLimit())== True:
+            fileno = len(fnmatch.filter(os.listdir(PathForLHAfiles), 'ALRM.*'))
+            newfileno = fileno + 1
+            currentLHA.NewLHAFileName = "ALRM."+str(newfileno)
+            currentLHA.NewLHAFileFullPath = LHAFiledirPath + "/LHAfiles/" + currentLHA.NewLHAFileName
+            currentLHA.WriteNewLHAFile(currentLHA.NewLHAFileFullPath, currentLHA.allcontent, 10)
+
+################# MicrOMEGAs Part ############################################################
+
             MicrOMEGAs = MyMicrOMEGAs()
             MicrOMEGAs.RenameAndCopy(currentLHA.NewLHAFileFullPath, Pathforvars1lha)
+
             MicrOMEGAs.RunMicrOMEGAs(Pathforvars1lha)
 
             MicrOMEGAs.LHAFileWithDM = os.path.basename("DM_ALRM."+str(newfileno))
@@ -98,10 +130,13 @@ for iter in range(1,NumberofEvent):
                 currentLHA.Erase(PathforMicrOMEGAsResult)
                 currentLHA.Erase(PathforChannelsOutput)
 
+            else:
+                currentLHA.Erase(currentLHA.NewLHAFileFullPath)
+        
 ################# Reading MicrOMEGAs Output ###################################
 
             exist_FullDestForLHAFileWithDM = os.path.isfile(MicrOMEGAs.FullDestForLHAFileWithDM)
-            exist_ChannelsNewFileName      = os.path.isfile(MicrOMEGAs.ChannelsNewFileName)
+            exist_ChannelsNewFileName      = os.path.isfile(MicrOMEGAs.FullDestForChannels)
 
             if (exist_FullDestForLHAFileWithDM and exist_ChannelsNewFileName) == True:
                 currentLHA.LoadLHAFile(MicrOMEGAs.FullDestForLHAFileWithDM)
@@ -111,19 +146,16 @@ for iter in range(1,NumberofEvent):
                     currentLHA.MassesFromMicrOMEGAs()
                     currentLHA.ReadChannels(MicrOMEGAs.FullDestForChannels)
                     currentLHA.CheckHiggsFunnel()                
-                    list_RD_diff.append(currentLHA.RD_difference())
+                    list_RD_diff.append(currentLHA.RD_difference)
 
-#                    if (currentLHA.MassConstraints() and currentLHA.RelicDensity_Constraint()) == False:
-                    if (currentLHA.MassConstraints() and currentLHA.Check_RD_diff(list_RD_diff)) == False:
+                    if (currentLHA.MassConstraints() and currentLHA.Check_RD_diff(list_RD_diff) and currentLHA.RelicDensity_Constraint() and currentLHA.CheckZpMassLimit()) == False:
                         currentLHA.Erase(currentLHA.NewLHAFileFullPath)                        
                         currentLHA.Erase(MicrOMEGAs.FullDestForLHAFileWithDM)
                         currentLHA.Erase(MicrOMEGAs.FullDestForChannels)
 
 ################# Running over a specific solution ############################
 
-#                    if currentLHA.MassConstraints() == True and currentLHA.Relic_Density_Bound == True and currentLHA.HiggsFunnelPercentage >= 10:
-#                    elif (currentLHA.MassConstraints() and currentLHA.RelicDensity_Constraint()) == True:
-                    elif (currentLHA.MassConstraints() and currentLHA.Check_RD_diff(list_RD_diff)) == True:                    
+                    elif (currentLHA.MassConstraints() and currentLHA.Check_RD_diff(list_RD_diff) and currentLHA.RelicDensity_Constraint() and currentLHA.CheckZpMassLimit()) == True:
                         for i in range(1,TotalFocusedRun):
 
                             currentLHA.allcontent.blocks["ALRMINPUTS"][1] = 0.0    #lm2
@@ -155,52 +187,79 @@ for iter in range(1,NumberofEvent):
                             currentLHA.allcontent.blocks["YUKAWA"][8] = currentLHA.allcontent.blocks["MASS"][107]
                             currentLHA.allcontent.blocks["YUKAWA"][9] = currentLHA.allcontent.blocks["MASS"][108]
 
+################ Pre-Check For Free Parameters By Using ALRM-Calculator  #####################
 
-                            fileno = len(fnmatch.filter(os.listdir(PathForLHAfiles), 'ALRM.*'))
-                            newfileno = fileno + 1
-                            currentLHA.NewLHAFileName = "ALRM."+str(newfileno)
-                            currentLHA.NewLHAFileFullPath = LHAFiledirPath + "/LHAfiles/" + currentLHA.NewLHAFileName
-                            currentLHA.WriteNewLHAFile(currentLHA.NewLHAFileFullPath, currentLHA.allcontent, 10)
+                            ALRM_focus = ALRM_calculator()
+                            ALRM_focus.gR = currentLHA.allcontent.blocks["ALRMINPUTS"][9]
+                            ALRM_focus.vp = currentLHA.allcontent.blocks["ALRMINPUTS"][8]
+                            ALRM_focus.tb = currentLHA.allcontent.blocks["ALRMINPUTS"][6]
+
+                            ALRM_focus.lm2 = currentLHA.allcontent.blocks["ALRMINPUTS"][1]
+                            ALRM_focus.lm3 = currentLHA.allcontent.blocks["ALRMINPUTS"][2]
+
+                            ALRM_focus.al1 = currentLHA.allcontent.blocks["ALRMINPUTS"][3]
+                            ALRM_focus.al2 = currentLHA.allcontent.blocks["ALRMINPUTS"][4]
+                            ALRM_focus.al3 = currentLHA.allcontent.blocks["ALRMINPUTS"][5]
+
+                            ALRM_focus.mu3 = currentLHA.allcontent.blocks["ALRMINPUTS"][7]
+
+                            ALRM_focus.parameters(ALRM_focus.gR,ALRM_focus.vp,ALRM_focus.tb,ALRM_focus.lm2,ALRM_focus.lm3,ALRM_focus.al1,ALRM_focus.al2,ALRM_focus.al3,ALRM_focus.mu3)
+                            ALRM_focus.CheckWMasses()
+                            ALRM_focus.CheckZZMixing()
+                            ALRM_focus.CheckZMasses()
+                            ALRM_focus.CheckHiggsMasses()
+
+                            if (ALRM_focus.Check_MassBounds() and ALRM_focus.Check_Minimization() and ALRM_focus.Check_ZpMassLimit())== True:
+
+                                fileno = len(fnmatch.filter(os.listdir(PathForLHAfiles), 'ALRM.*'))
+                                newfileno = fileno + 1
+                                currentLHA.NewLHAFileName = "ALRM."+str(newfileno)
+                                currentLHA.NewLHAFileFullPath = LHAFiledirPath + "/LHAfiles/" + currentLHA.NewLHAFileName
+                                currentLHA.WriteNewLHAFile(currentLHA.NewLHAFileFullPath, currentLHA.allcontent, 10)
 
 ################# MicrOMEGAs Part ###########################################
 
-                            Micro_small = MyMicrOMEGAs()
-                            Micro_small.RenameAndCopy(currentLHA.NewLHAFileFullPath, Pathforvars1lha)
-                            Micro_small.RunMicrOMEGAs(Pathforvars1lha)
+                                Micro_small = MyMicrOMEGAs()
+                                Micro_small.RenameAndCopy(currentLHA.NewLHAFileFullPath, Pathforvars1lha)
+                                
+                                Micro_small.RunMicrOMEGAs(Pathforvars1lha)
 
-                            Micro_small.LHAFileWithDM = os.path.basename("DM_ALRM."+str(newfileno))
-                            Micro_small.FullDestForLHAFileWithDM = dirPathLHAFileWithDM+"/"+Micro_small.LHAFileWithDM
-                            MicrOMEGA_Result_exist = os.path.isfile(PathforMicrOMEGAsResult)
+                                Micro_small.LHAFileWithDM = os.path.basename("DM_ALRM."+str(newfileno))
+                                Micro_small.FullDestForLHAFileWithDM = dirPathLHAFileWithDM+"/"+Micro_small.LHAFileWithDM
+                                MicrOMEGA_Result_exist = os.path.isfile(PathforMicrOMEGAsResult)
 
-                            Micro_small.ChannelsNewFileName = os.path.basename("Channels."+str(newfileno))
-                            Micro_small.FullDestForChannels = dirPathLHAFileWithDM+"/"+Micro_small.ChannelsNewFileName
-                            Channels_exist = os.path.isfile(PathforChannelsOutput)
+                                Micro_small.ChannelsNewFileName = os.path.basename("Channels."+str(newfileno))
+                                Micro_small.FullDestForChannels = dirPathLHAFileWithDM+"/"+Micro_small.ChannelsNewFileName
+                                Channels_exist = os.path.isfile(PathforChannelsOutput)
                         
-                            if (MicrOMEGA_Result_exist and Channels_exist) == True:
-                                Micro_small.LHAwithDM(currentLHA.NewLHAFileFullPath, PathforMicrOMEGAsResult, Micro_small.FullDestForLHAFileWithDM)
-                                Micro_small.RenameAndCopy(PathforChannelsOutput, Micro_small.FullDestForChannels)
-                                currentLHA.Erase(PathforMicrOMEGAsResult)
-                                currentLHA.Erase(PathforChannelsOutput)
+                                if (MicrOMEGA_Result_exist and Channels_exist) == True:
+                                    Micro_small.LHAwithDM(currentLHA.NewLHAFileFullPath, PathforMicrOMEGAsResult, Micro_small.FullDestForLHAFileWithDM)
+                                    Micro_small.RenameAndCopy(PathforChannelsOutput, Micro_small.FullDestForChannels)
+                                    currentLHA.Erase(PathforMicrOMEGAsResult)
+                                    currentLHA.Erase(PathforChannelsOutput)
+
+                                else:
+                                    currentLHA.Erase(currentLHA.NewLHAFileFullPath)
 
 ################# Reading MicrOMEGAs Output ###################################
 
-                            exist_FullDestForLHAFileWithDM = os.path.isfile(Micro_small.FullDestForLHAFileWithDM)
-                            exist_ChannelsNewFileName      = os.path.isfile(Micro_small.ChannelsNewFileName)
+                                exist_FullDestForLHAFileWithDM = os.path.isfile(Micro_small.FullDestForLHAFileWithDM)
+                                exist_ChannelsNewFileName      = os.path.isfile(Micro_small.FullDestForChannels)
 
-                            if (exist_FullDestForLHAFileWithDM and exist_ChannelsNewFileName) == True:
-                                currentLHA.LoadLHAFile(Micro_small.FullDestForLHAFileWithDM)
-                                if currentLHA.CheckMicrOMEGABlock() == True:
-                                    currentLHA.Parameters()
-                                    currentLHA.NormalizeDMResults()
-                                    currentLHA.MassesFromMicrOMEGAs()
-                                    currentLHA.ReadChannels(Micro_small.FullDestForChannels)
-                                    currentLHA.CheckHiggsFunnel()
-                                    list_RD_diff.append(currentLHA.RD_difference())
+                                if (exist_FullDestForLHAFileWithDM and exist_ChannelsNewFileName) == True:
+                                    currentLHA.LoadLHAFile(Micro_small.FullDestForLHAFileWithDM)
+                                    if currentLHA.CheckMicrOMEGABlock() == True:
+                                        currentLHA.Parameters()
+                                        currentLHA.NormalizeDMResults()
+                                        currentLHA.MassesFromMicrOMEGAs()
+                                        currentLHA.ReadChannels(Micro_small.FullDestForChannels)
+                                        currentLHA.CheckHiggsFunnel()
+                                        list_RD_diff.append(currentLHA.RD_difference)
                                 
-                                    if (currentLHA.MassConstraints() and currentLHA.Check_RD_diff(list_RD_diff)) == False:
-                                        currentLHA.Erase(currentLHA.NewLHAFileFullPath)
-                                        currentLHA.Erase(Micro_small.FullDestForLHAFileWithDM)
-                                        currentLHA.Erase(Micro_small.FullDestForChannels)
+                                        if (currentLHA.MassConstraints() and currentLHA.Check_RD_diff(list_RD_diff) and currentLHA.RelicDensity_Constraint() and currentLHA.CheckZpMassLimit()) == False:
+                                            currentLHA.Erase(currentLHA.NewLHAFileFullPath)
+                                            currentLHA.Erase(Micro_small.FullDestForLHAFileWithDM)
+                                            currentLHA.Erase(Micro_small.FullDestForChannels)
 
-        elif currentLHA.CheckMinimization() == False:
-            currentLHA.Erase(currentLHA.NewLHAFileFullPath)
+#################################################################################
+

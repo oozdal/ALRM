@@ -1,5 +1,8 @@
 import os
 import shutil
+import subprocess
+import time
+import sys
 
 class MyMicrOMEGAs():
     def __init__(self):
@@ -18,12 +21,11 @@ class MyMicrOMEGAs():
         self.new_file = os.path.join(self.newLHAdirPath, self.newLHAFileName)
         shutil.copy2(self.old_file, self.new_file)
 
+
     def RunMicrOMEGAs(self, LHAInput):
-         os.system("./../../../hepwork/micromegas_5.0.8/ALRM_gRfree_coanni/myOmega "+str(LHAInput))
-#        try:
-#            os.system("./../../hepwork/micromegas_5.0.8/ALRM_gRfree_coanni/myOmega "+str(LHAInput))
-#        except KeyError and AttributeError:
-#            print "can not calculate a particular parameter!"
+    
+        p = subprocess.call("timeout 5 ./../../../hepwork/micromegas_5.0.8/ALRM_gRfree_coanni/myOmega "+str(LHAInput),shell=True)
+
 
     def LHAwithDM(self, PathLHAfile, PathMicrOMEGAsResult, PathLHAfileWithDM):
         filenames = [PathLHAfile, PathMicrOMEGAsResult]
@@ -32,4 +34,7 @@ class MyMicrOMEGAs():
                 with open(fname) as infile:
                     for line in infile:
                         outfile.write(line)
+
+    def handler(signum, frame):
+        print 'Signal handler called with signal', signum
 
