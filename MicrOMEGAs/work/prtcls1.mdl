@@ -1,0 +1,35 @@
+ALRSM_BF
+ Particles
+ Full  name  |A          |A+         | number |2*spin| mass          |width          |color|aux|>LaTex(A)<|>LaTeX(A+)   <|
+A            |A          |A          |22      |2     |0              |0              |1    |G  |A         |A             |
+Z            |Z          |Z          |23      |2     |MZ             |!WZ            |1    |0  |Z         |Z             |
+Zp           |Zp         |Zp         |32      |2     |MZp            |!WZp           |1    |0  |Zp        |Zp            |
+W            |W          |W~         |24      |2     |MW             |!WW            |1    |3  |W         |W~            |
+Wp           |Wp         |Wp~        |34      |2     |MWp            |!WWp           |1    |3  |Wp        |Wp~           |
+G            |G          |G          |21      |2     |0              |0              |8    |G  |G         |G             |
+H0           |H0         |H0         |25      |0     |MH0            |!WH0           |1    |0  |H0        |H0            |
+H1           |H1         |H1         |35      |0     |MH1            |!WH1           |1    |0  |H1        |H1            |
+H2           |H2         |H2         |45      |0     |MH2            |!WH2           |1    |0  |H2        |H2            |
+H3           |H3         |H3         |55      |0     |MH3            |!WH3           |1    |0  |H3        |H3            |
+A1           |A1         |A1         |36      |0     |MA1            |!WA1           |1    |0  |A1        |A1            |
+A2           |A2         |A2         |46      |0     |MA2            |!WA2           |1    |0  |A2        |A2            |
+Hp1          |Hp1        |Hp1~       |37      |0     |MHp1           |!WHp1          |1    |3  |Hp1       |Hp1~          |
+Hp2          |Hp2        |Hp2~       |47      |0     |MHp2           |!WHp2          |1    |3  |Hp2       |Hp2~          |
+ve           |ve         |ve~        |12      |1     |Mve            |0              |1    |0  |ve        |ve~           |
+vm           |vm         |vm~        |14      |1     |Mvm            |0              |1    |0  |vm        |vm~           |
+vt           |vt         |vt~        |16      |1     |Mvt            |0              |1    |0  |vt        |vt~           |
+e            |e-         |e+         |11      |1     |Me             |0              |1    |-3 |e-        |e+            |
+m            |mu-        |mu+        |13      |1     |MMU            |0              |1    |-3 |mu-       |mu+           |
+ta           |tau-       |tau+       |15      |1     |MTA            |0              |1    |-3 |tau-      |tau+          |
+u            |u          |u~         |2       |1     |MU             |0              |3    |2  |u         |u~            |
+c            |c          |c~         |4       |1     |MC             |0              |3    |2  |c         |c~            |
+t            |t          |t~         |6       |1     |MT             |!WT            |3    |2  |t         |t~            |
+d            |d          |d~         |1       |1     |MD             |0              |3    |-1 |d         |d~            |
+s            |s          |s~         |3       |1     |MS             |0              |3    |-1 |s         |s~            |
+b            |b          |b~         |5       |1     |MB             |0              |3    |-1 |b         |b~            |
+ne           |~ne        |~ne~       |6000012 |1     |Mne            |0              |1    |0  |~ne       |~ne~          |
+nm           |~nm        |~nm~       |6000014 |1     |Mnm            |!Wnm           |1    |0  |~nm       |~nm~          |
+nt           |~nt        |~nt~       |6000016 |1     |Mnt            |!Wnt           |1    |0  |~nt       |~nt~          |
+dp           |dp         |dp~        |6000001 |1     |MDP            |0              |3    |-1 |dp        |dp~           |
+sp           |sp         |sp~        |6000003 |1     |MSP            |!WSP           |3    |-1 |sp        |sp~           |
+bp           |bp         |bp~        |6000005 |1     |MBP            |!WBP           |3    |-1 |bp        |bp~           |

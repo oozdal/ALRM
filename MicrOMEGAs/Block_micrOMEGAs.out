@@ -1,0 +1,56 @@
+Block micrOMEGAs
+   401   3.602318E+03   #MZp
+   402   2.999677E+03   #MWp
+   403   2.000000E+03   #Mne
+   404   3.000000E+03   #Mnm
+   405   4.000000E+03   #Mnt
+   406   1.400000E+03   #MDD
+   407   1.822000E+03   #MDS
+   408   2.200000E+03   #MDB
+   409   2.991894E+02   #mh1
+   410   6.154475E+02   #mh2
+   411   9.496139E+03   #mh3
+   412   2.991894E+02   #a1
+   413   6.112931E+02   #a2
+   414   6.112539E+02   #h1+
+   415   2.992695E+02   #h2-
+   700   1.683884E-01   # relic density 
+   100   1.382664E-01   # ~ne ~ne~ -> u u~
+   101   1.382663E-01   # ~ne ~ne~ -> c c~
+   102   1.372657E-01   # ~ne ~ne~ -> t t~
+   103   1.345490E-01   # ~ne ~ne~ -> dp dp~
+   104   7.299449E-02   # ~ne ~ne~ -> e- e+
+   105   5.903277E-02   # ~ne ~ne~ -> sp sp~
+   106   4.327995E-02   # ~ne ~ne~ -> mu- mu+
+   107   3.430790E-02   # ~ne ~ne~ -> tau- tau+
+   108   2.979094E-02   # ~ne ~ne~ -> H1 A1
+   109   2.976696E-02   # ~ne ~ne~ -> Hp2 Hp2~
+   110   2.007124E-02   # ~ne ~ne~ -> d d~
+   111   2.007124E-02   # ~ne ~ne~ -> s s~
+   112   2.007110E-02   # ~ne ~ne~ -> b b~
+   113   1.331927E-02   # ~ne ~ne~ -> W W~
+   114   1.260212E-02   # ~ne ~ne~ -> Z H0
+   115   1.203699E-02   # ~ne ~ne~ -> ve ve~
+   116   1.203631E-02   # ~ne ~ne~ -> vm vm~
+   117   1.203630E-02   # ~ne ~ne~ -> vt vt~
+   118   1.149793E-02   # ~ne ~ne~ -> Z H2
+   119   1.093829E-02   # ~ne ~ne~ -> W Hp1~
+   120   1.093829E-02   # ~ne ~ne~ -> W~ Hp1
+   121   1.093646E-02   # ~ne ~ne~ -> H0 A2
+   306   1.768527E-26   #sigmaV [cm^3/s]
+   307   8.852789E-18   #Photon flux [cm^2 s GeV]^{-1}
+   308   3.253155E-16   #Positron flux [cm^2 sr s GeV]^{-1}
+   309   1.406456E-15   #Antiproton flux [cm^2 sr s GeV]^{-1}
+   201   1.308819E-09   #P SI [pb]
+   202   9.705469E-11   #P SD [pb]
+   203   9.642210E-11   #N SI [pb]
+   204   6.185494E-10   #N SD [pb]
+   301   2.524087E-04   #73Ge: Total number of events [day/kg]
+   302   3.616332E-04   #131Xe: Total number of events [day/kg]
+   303   2.836118E-05   #23Na: Total number of events [day/kg]
+   304   3.607721E-04   #I127: Total number of events [day/kg]
+   305   9.406076E-03   #IceCube22 exclusion confidence level
+   900   4.412834E-08   #cs(pp-> Wp,Wp~)
+   901   3.805101E-05   #cs(pp-> Wp,dp)
+   902   2.418644E-03   #cs(pp-> dp,dp~)
+   903   5.657908E-03   #cs(pp-> Zp)
